@@ -1,0 +1,19 @@
+.controlsAndFunctionalities{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    direction: rtl;
+
+}
+.pagination{
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
+}
+.pagination > button{
+    display: flex;
+    width: 60px;
+    gap: 10px;
+}
