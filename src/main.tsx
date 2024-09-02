@@ -1,21 +1,26 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import { BrowserRouter } from 'react-router-dom'
-import './main.css'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import App from "./App";
+import { store } from "./store/store";
+import "./index.css";
+import { Toaster } from "sonner";
 
-import {store} from "@/store/store.ts";
+const queryClient = new QueryClient();
 
-import {Provider} from "react-redux";
+const root = createRoot(document.getElementById("root")!);
 
-
-createRoot(document.getElementById('root')!).render(
+root.render(
   <StrictMode>
-      <Provider store={store}>
-          <BrowserRouter>
-              <App/>
-          </BrowserRouter>
-      </Provider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+          <Toaster position="bottom-right" richColors />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </Provider>
   </StrictMode>
-)
+);
