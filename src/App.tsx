@@ -1,7 +1,7 @@
+import RoutesConfig from "./routes/routesConfig";
 
-export default function App() {
-    return(
-      <></>
-    )
+const App: React.FC = () => {
+  return <RoutesConfig />;
+};
 
-}
+export default App;
