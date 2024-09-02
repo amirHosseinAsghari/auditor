@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,8 +13,47 @@ const Dashboard: React.FC = () => {
   const status = new URLSearchParams(location.search).get("status") || "new";
   const { data, isLoading, error } = useReports(status);
 
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    reportId: number;
+  } | null>(null);
+
   const handleTabChange = (tab: string) => {
     navigate(`?status=${tab}`, { replace: true });
+  };
+
+  const handleRightClick = (event: React.MouseEvent, reportId: number) => {
+    event.preventDefault();
+    setContextMenu({ x: event.clientX, y: event.clientY, reportId });
+  };
+
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (contextMenu && !target.closest(".context-menu")) {
+        setContextMenu(null);
+      }
+    },
+    [contextMenu]
+  );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
+  const handleMenuOptionClick = (option: "view" | "edit") => {
+    if (contextMenu) {
+      const path =
+        option === "view"
+          ? `report/${contextMenu.reportId}`
+          : `report/edit/${contextMenu.reportId}`;
+      navigate(path);
+      setContextMenu(null);
+    }
   };
 
   const renderTabs = () => (
@@ -58,10 +97,13 @@ const Dashboard: React.FC = () => {
 
     return (
       <div className="w-full flex flex-col justify-center items-center gap-2">
-        {data.reports.map((report: Report) => (
+        {data?.reports.map((report: Report) => (
           <div
             key={report.id}
             className="w-full rounded-[10px] flex flex-col gap-3 justify-center items-start border border-[#00000040] p-4 shadow"
+            onContextMenu={(event) =>
+              handleRightClick(event, Number(report.id))
+            }
           >
             <h2 className="font-semibold text-xl">{report.title}</h2>
             <p className="w-full truncate text-base font-medium">
@@ -71,6 +113,27 @@ const Dashboard: React.FC = () => {
             <p className="text-sm font-normal">{report.created_at}</p>
           </div>
         ))}
+        {contextMenu && (
+          <div
+            className="context-menu fixed bg-white border border-gray-300 rounded-[10px] p-2 shadow-lg"
+            style={{ left: contextMenu.x, top: contextMenu.y }}
+          >
+            <ul>
+              <li
+                onClick={() => handleMenuOptionClick("view")}
+                className="p-2 text-sm font-medium cursor-pointer hover:bg-gray-100"
+              >
+                مشاهده جزییات
+              </li>
+              <li
+                onClick={() => handleMenuOptionClick("edit")}
+                className="p-2 text-sm font-medium  cursor-pointer hover:bg-gray-100"
+              >
+                ویرایش گزارش
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     );
   };
