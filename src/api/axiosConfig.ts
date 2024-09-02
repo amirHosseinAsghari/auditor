@@ -4,8 +4,8 @@ import { store } from "@/store/store";
 import { clearAuth } from "@/store/authSlice";
 
 const axiosInstance = axios.create({
-  // TODO: add Base Url
-  baseURL: "baseurl",
+  // TODO
+  baseURL: "https://api.idontknow.com",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

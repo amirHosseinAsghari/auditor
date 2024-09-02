@@ -286,12 +286,12 @@ body {
 }
 
 .scroll {
-  scrollbar-width: 7px;
+  scrollbar-width: 5px;
   scrollbar-color: #00abb16e;
 }
 
 .scroll::-webkit-scrollbar {
-  width: 7px;
+  width: 5px;
 }
 
 .scroll::-webkit-scrollbar-thumb {
