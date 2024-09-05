@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
   );
 
   const renderReports = () => {
-    if (isLoading) {
+    if (!isLoading) {
       return (
         <div className="container after:!bg-primary before:!bg-primary">
           <div className="dot !bg-primary"></div>
