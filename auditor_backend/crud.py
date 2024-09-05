@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -34,23 +34,36 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def get_reports(db: Session,author_id: int, page: int = 1, limit: int = 10):
+def get_reports(db: Session,role: str, user_id: int, page: int = 1, limit: int = 10, status: Union[str, None] = None):
     if page <= 0:
         page = 1
-    reports = db.query(models.Reports).filter(models.Reports.author_id == author_id).offset((page * 10) - 10).limit(limit).all()
+
+    reports = []
     result_reports = []
+    # if author wants reports
+    if role == "author":
+        reports = db.query(models.Reports).filter(models.Reports.author_id == user_id).offset((page * 10) - 10).limit(limit).all()
+    # if auditor wants reports
+    # status-less reports
+    if role == "auditor":
+        if not status:
+            reports = db.query(models.Reports).offset((page * 10) - 10).limit(limit).all()
+        if status:
+            reports = db.query(models.Reports).filter(models.Reports.status == status).offset((page * 10) - 10).limit(limit).all()
+
+    # approved/rejected reports
     for i in range(len(reports)):
         author = get_user(db, reports[i].author_id)
         auditor = get_user(db, reports[i].auditor_id)
         if author or auditor:
             result_reports.append(schemas.Report(id=reports[i].id, status=reports[i].status, author=author.username,
-                                  auditor=auditor.username if auditor else None, description=reports[i].description,
-                                  vulnerability_path=reports[i].vulnerability_path, source=reports[i].source,
-                                  documents=reports[i].documents, cvss_vector=reports[i].cvss_vector, title=reports[i].title,
-                                  date=reports[i].date))
-
-    return result_reports
-
+                                                 auditor=auditor.username if auditor else None,
+                                                 description=reports[i].description,
+                                                 vulnerability_path=reports[i].vulnerability_path,
+                                                 source=reports[i].source,
+                                                 documents=reports[i].documents, cvss_vector=reports[i].cvss_vector,
+                                                 title=reports[i].title,
+                                                 date=reports[i].date))
 
 def remove_report(db: Session, report_id: int) -> bool:
     deleted_report = db.query(models.Reports).filter(models.Reports.id == report_id).delete()

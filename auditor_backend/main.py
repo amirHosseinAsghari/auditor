@@ -114,15 +114,24 @@ def get_report(id: int, db: db_dependency,access_token: Annotated[Union[str, Non
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 @app.get("/api/reports/{page}", response_model=list[schemas.Report])
-def get_reports(db: db_dependency, page: int = 1,access_token: Annotated[Union[str, None], Header()] = None):
+def get_reports(db: db_dependency, page: int = 1,status: Union[str, None] = None,access_token: Annotated[Union[str, None], Header()] = None):
     is_authorized = crud.isAuthenticated(db=db,token=access_token)
     if is_authorized:
-        author_user_id = crud.get_user_id_by_token(db, token=access_token)
-        reports = crud.get_reports(author_id=author_user_id,page=page, db=db)
-        if reports:
-            return reports
-        else:
-            raise HTTPException(status_code=404, detail="Resource not found")
+        if is_authorized.role == "author":
+            author_user_id = crud.get_user_id_by_token(db, token=access_token)
+            reports = crud.get_reports(role=is_authorized.role,user_id=author_user_id, page=page, db=db)
+            if reports:
+                return reports
+            else:
+                raise HTTPException(status_code=404, detail="Resource not found")
+        if is_authorized.role == "auditor":
+            auditor_user_id = crud.get_user_id_by_token(db, token=access_token)
+            reports = crud.get_reports(role=is_authorized.role, user_id=auditor_user_id, page=page, db=db)
+            if reports:
+                return reports
+            else:
+                raise HTTPException(status_code=404, detail="Resource not found")
+
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
