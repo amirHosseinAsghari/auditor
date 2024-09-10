@@ -14,14 +14,12 @@ export const useLogin = () => {
     {
       onSuccess: (data) => {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("avatar", data.avatar);
         localStorage.setItem("role", data.role);
 
         dispatch(
           setAuth({
             role: data.role,
             token: data.token,
-            avatar: data.avatar,
           })
         );
       },

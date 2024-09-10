@@ -1,15 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
-  role: string | null;
   token: string | null;
-  avatar: string | null;
+  role: string | null;
+
 }
 
 const initialState: AuthState = {
-  role: null,
-  token: null,
-  avatar: null,
+  token: localStorage.getItem("token") ? localStorage.getItem("token") : null,
+  role: localStorage.getItem("role") ? localStorage.getItem("role") : null,
 };
 
 const authSlice = createSlice({
@@ -18,21 +17,15 @@ const authSlice = createSlice({
   reducers: {
     setAuth(
       state,
-      action: PayloadAction<{
-        role: string;
-        token: string;
-        avatar: string;
-      }>
+      action: PayloadAction<AuthState>
     ) {
-      const { role, token, avatar } = action.payload;
+      const { role, token } = action.payload;
       state.role = role;
       state.token = token;
-      state.avatar = avatar;
     },
     clearAuth(state) {
       state.role = null;
       state.token = null;
-      state.avatar = null;
     },
   },
 });

@@ -10,8 +10,9 @@ const Dashboard: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const status = new URLSearchParams(location.search).get("status") || "new";
-  const { data, isLoading, error } = useReports(status);
+  const status: string = new URLSearchParams(location.search).get("status") || "new";
+  const page: number = parseInt(new URLSearchParams(location.search).get("page") || "1");
+  const { data : reports, isLoading, error } = useReports(status, page);
 
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -58,7 +59,7 @@ const Dashboard: React.FC = () => {
 
   const renderTabs = () => (
     <div className="flex gap-2 justify-start items-start">
-      {["new", "approved", "rejected"].map((tab) => (
+      {["NA", "approved", "rejected"].map((tab) => (
         <button
           key={tab}
           className={`px-4 py-3 rounded-[10px] border focus:outline-none transition-colors duration-300 text-sm font-medium ${
@@ -68,7 +69,7 @@ const Dashboard: React.FC = () => {
           }`}
           onClick={() => handleTabChange(tab)}
         >
-          {tab === "new" && "گزارش های جدید"}
+          {tab === "NA" && "گزارش های جدید"}
           {tab === "approved" && "گزارش های تایید شده"}
           {tab === "rejected" && "گزارش های رد شده"}
         </button>
@@ -77,7 +78,7 @@ const Dashboard: React.FC = () => {
   );
 
   const renderReports = () => {
-    if (!isLoading) {
+    if (isLoading) {
       return (
         <div className="container after:!bg-primary before:!bg-primary">
           <div className="dot !bg-primary"></div>
@@ -91,13 +92,13 @@ const Dashboard: React.FC = () => {
       );
     }
 
-    if (!data?.reports || data.reports.length === 0) {
+    if (!reports || reports?.length === 0) {
       return <p className="font-medium text-base">گزارشی موجود نیست.</p>;
     }
 
     return (
       <div className="w-full flex flex-col justify-center items-center gap-2">
-        {data?.reports.map((report: Report) => (
+        {reports?.map((report: Report) => (
           <div
             key={report.id}
             className="w-full rounded-[10px] flex flex-col gap-3 justify-center items-start border border-[#00000040] p-4 shadow"
@@ -110,7 +111,7 @@ const Dashboard: React.FC = () => {
               {report.description}
             </p>
             {/** TODO : Date format */}
-            <p className="text-sm font-normal">{report.created_at}</p>
+            <p className="text-sm font-normal">{report.date}</p>
           </div>
         ))}
         {contextMenu && (

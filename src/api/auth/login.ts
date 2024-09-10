@@ -7,7 +7,6 @@ interface LoginCredentials {
 
 interface LoginResponse {
   token: string;
-  avatar: string;
   role: "auditor" | "author";
 }
 
@@ -15,7 +14,7 @@ export const loginUser = async (
   credentials: LoginCredentials
 ): Promise<LoginResponse> => {
   const response = await axiosInstance.post<LoginResponse>(
-    "/login",
+    "/auth/login",
     credentials
   );
   return response.data;
