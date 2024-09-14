@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "@/api/auth/useLogin";
+import { useLogin } from "@/api/auth/authMutations";
 
 const validationSchema = Yup.object({
   username: Yup.string().required("نام کاربری الزامی است"),

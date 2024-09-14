@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
 import { fetchReport, fetchReports } from "./reports";
 
-const useReports = (status: string, page: number) => {
-  return useQuery(["reports", status], () => fetchReports(status, page), {
-    // TODO remove status param for author role users
+const useReports = (page: number, status?: string) => {
+  return useQuery(["reports", status], () => fetchReports(page, status), {
     enabled: !!status,
   });
 };
