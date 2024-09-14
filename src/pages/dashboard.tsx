@@ -4,15 +4,28 @@ import { RootState } from "@/store/store";
 import { useLocation, useNavigate } from "react-router-dom";
 import useReports from "@/api/reports/useReports";
 import { Report } from "@/api/reports/reports";
+import { useDeleteReport } from "@/api/reports/reportMutations";
+import Button from "@/components/button";
 
 const Dashboard: React.FC = () => {
   const { role } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const status: string = new URLSearchParams(location.search).get("status") || "new";
-  const page: number = parseInt(new URLSearchParams(location.search).get("page") || "1");
-  const { data : reports, isLoading, error } = useReports(status, page);
+  const status: string =
+    new URLSearchParams(location.search).get("status") || "new";
+  const page: number = parseInt(
+    new URLSearchParams(location.search).get("page") || "1"
+  );
+
+  const {
+    data: reports,
+    isLoading,
+    error,
+  } = useReports(page, status === "new" ? undefined : status);
+
+  const { mutate: deleteMutation, isLoading: deleteLoading } =
+    useDeleteReport();
 
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -21,7 +34,11 @@ const Dashboard: React.FC = () => {
   } | null>(null);
 
   const handleTabChange = (tab: string) => {
-    navigate(`?status=${tab}`, { replace: true });
+    if (tab === "new") {
+      navigate(`?page=${page}`, { replace: true });
+    } else {
+      navigate(`?status=${tab}&page=${page}`, { replace: true });
+    }
   };
 
   const handleRightClick = (event: React.MouseEvent, reportId: number) => {
@@ -46,20 +63,20 @@ const Dashboard: React.FC = () => {
     };
   }, [handleClickOutside]);
 
-  const handleMenuOptionClick = (option: "view" | "edit") => {
+  const handleMenuOptionClick = async (option: "delete" | "edit") => {
     if (contextMenu) {
-      const path =
-        option === "view"
-          ? `report/${contextMenu.reportId}`
-          : `report/edit/${contextMenu.reportId}`;
-      navigate(path);
+      if (option === "delete") {
+        deleteMutation(contextMenu.reportId.toString());
+      } else {
+        const path = `report/edit/${contextMenu.reportId}`;
+        navigate(path);
+      }
       setContextMenu(null);
     }
   };
-
   const renderTabs = () => (
     <div className="flex gap-2 justify-start items-start">
-      {["NA", "approved", "rejected"].map((tab) => (
+      {["new", "approved", "rejected"].map((tab) => (
         <button
           key={tab}
           className={`px-4 py-3 rounded-[10px] border focus:outline-none transition-colors duration-300 text-sm font-medium ${
@@ -69,7 +86,7 @@ const Dashboard: React.FC = () => {
           }`}
           onClick={() => handleTabChange(tab)}
         >
-          {tab === "NA" && "گزارش های جدید"}
+          {tab === "new" && "گزارش های جدید"}
           {tab === "approved" && "گزارش های تایید شده"}
           {tab === "rejected" && "گزارش های رد شده"}
         </button>
@@ -87,6 +104,9 @@ const Dashboard: React.FC = () => {
     }
 
     if (error) {
+      if ((error as any).status === 404) {
+        return <p className="font-medium text-base">گزارشی موجود نیست.</p>;
+      }
       return (
         <div className="text-center text-red-600">خطا در بارگذاری گزارش‌ها</div>
       );
@@ -105,8 +125,28 @@ const Dashboard: React.FC = () => {
             onContextMenu={(event) =>
               handleRightClick(event, Number(report.id))
             }
+            onClick={() => navigate(`report/${report.id}`)}
           >
-            <h2 className="font-semibold text-xl">{report.title}</h2>
+            <div className="w-full flex justify-between items-center">
+              <h2 className="font-semibold text-xl">{report.title}</h2>
+              {role === "author" && (
+                <div
+                  className={`rounded-lg px-3 py-2 font-normal text-sm border ${
+                    report.status === "approved"
+                      ? "text-green-400 border-green-400"
+                      : status === "rejected"
+                      ? "text-red-500 border-red-500"
+                      : "text-blue-600 border-blue-600"
+                  }`}
+                >
+                  {report.status === "approved"
+                    ? "تایید شده"
+                    : report.status === "rejected"
+                    ? "رد شده"
+                    : "جدید"}
+                </div>
+              )}
+            </div>
             <p className="w-full truncate text-base font-medium">
               {report.description}
             </p>
@@ -121,10 +161,10 @@ const Dashboard: React.FC = () => {
           >
             <ul>
               <li
-                onClick={() => handleMenuOptionClick("view")}
+                onClick={() => handleMenuOptionClick("delete")}
                 className="p-2 text-sm font-medium cursor-pointer hover:bg-gray-100"
               >
-                مشاهده جزییات
+                حذف گزارش
               </li>
               <li
                 onClick={() => handleMenuOptionClick("edit")}
@@ -141,7 +181,16 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-6 h-full flex flex-col justify-start items-start gap-7">
-      {role === "auditor" && renderTabs()}
+      {role === "auditor" ? (
+        renderTabs()
+      ) : (
+        <Button
+          type="button"
+          label={"افزودن گزارش"}
+          variant="primary"
+          onClick={() => navigate("report/new")}
+        />
+      )}
       {renderReports()}
     </div>
   );

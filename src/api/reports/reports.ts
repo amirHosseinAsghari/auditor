@@ -12,13 +12,11 @@ export interface Report {
   source: string | null;
   documents: string | null;
   cvss_vector: string | null;
-
 }
 
-
 export const fetchReports = async (
-  status: string,
-  page: number
+  page: number,
+  status?: string
 ): Promise<Report[]> => {
   const response = await axios.get<Report[]>("/reports", {
     params: { status, page },
@@ -69,6 +67,11 @@ export const updateReport = async (
   data: CreateReportParams
 ): Promise<Report> => {
   const response = await axios.put<Report>(`/report/${id}`, data);
+  return response.data;
+};
+
+export const deleteReport = async (id?: string): Promise<Report> => {
+  const response = await axios.delete<Report>(`/report/${id}`);
   return response.data;
 };
 

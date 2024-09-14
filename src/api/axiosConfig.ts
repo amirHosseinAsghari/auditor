@@ -29,10 +29,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response) {
-      const {data } = error.response;
-      showErrorToast(data.message || "An error occurred");
+    if (axios.isAxiosError(error) && error.response) {
+      showErrorToast("An error occurred");
+      return Promise.reject(error.response);
     }
+
     return Promise.reject(error);
   }
 );
