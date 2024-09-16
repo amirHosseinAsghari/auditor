@@ -26,6 +26,7 @@ const ProtectedRoutes: React.FC = () => {
   }
 
   const isAuthenticated = authData?.isAuthenticated ?? false;
+  console.log(isAuthenticated)
 
   return (
     <Routes>
