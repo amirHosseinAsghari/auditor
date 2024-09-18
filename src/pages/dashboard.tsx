@@ -18,11 +18,10 @@ const Dashboard: React.FC = () => {
     new URLSearchParams(location.search).get("page") || "1"
   );
 
-  const {
-    data: reports,
-    isLoading,
-    error,
-  } = useReports(page, status === "new" ? undefined : status);
+  const { data, isLoading, error } = useReports(
+    page,
+    status === "new" ? undefined : status
+  );
 
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -74,6 +73,14 @@ const Dashboard: React.FC = () => {
     return formattedDate;
   }
 
+  const handlePagination = (newPage: number) => {
+    if (status === "new") {
+      navigate(`?page=${newPage}`, { replace: true });
+    } else {
+      navigate(`?status=${status}&page=${newPage}`, { replace: true });
+    }
+  };
+
   const renderTabs = () => (
     <div className="flex gap-2 justify-start items-start">
       {["new", "approved", "rejected"].map((tab) => (
@@ -112,13 +119,13 @@ const Dashboard: React.FC = () => {
       );
     }
 
-    if (!reports || reports?.length === 0) {
+    if (!data?.reports || data?.reports?.length === 0) {
       return <p className="font-medium text-base">گزارشی موجود نیست.</p>;
     }
 
     return (
       <div className="w-full flex flex-col justify-center items-center gap-2">
-        {reports?.map((report: Report) => (
+        {data?.reports?.map((report: Report) => (
           <div
             key={report.id}
             className="w-full cursor-pointer rounded-[10px] flex flex-col gap-3 justify-center items-start border border-[#00000040] p-4 shadow"
@@ -161,16 +168,38 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-6 h-full flex flex-col justify-start items-start gap-7">
-      {role === "auditor" ? (
-        renderTabs()
-      ) : (
-        <Button
-          type="button"
-          label={"افزودن گزارش"}
-          variant="primary"
-          onClick={() => navigate("report/new")}
-        />
-      )}
+      <div className="w-full flex justify-between items-center">
+        {role === "auditor" ? (
+          renderTabs()
+        ) : (
+          <Button
+            type="button"
+            label={"افزودن گزارش"}
+            variant="primary"
+            onClick={() => navigate("report/new")}
+          />
+        )}
+        <div className="flex justify-center items-center gap-5">
+          {page > 1 && (
+            <Button
+              type="button"
+              label={"قبلی"}
+              variant="primary"
+              onClick={() => handlePagination(page - 1)}
+              pagination
+            />
+          )}
+          {data?.page_count && page < data.page_count && (
+            <Button
+              type="button"
+              label={"بعدی"}
+              variant="primary"
+              onClick={() => handlePagination(page + 1)}
+              pagination
+            />
+          )}
+        </div>
+      </div>
       {renderReports()}
     </div>
   );

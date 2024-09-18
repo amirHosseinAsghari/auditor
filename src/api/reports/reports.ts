@@ -14,11 +14,16 @@ export interface Report {
   cvss_vector: string | null;
 }
 
+export interface ReportsApiResponse {
+  reports: Report[];
+  page_count: number;
+}
+
 export const fetchReports = async (
   page: number,
   status?: string
-): Promise<Report[]> => {
-  const response = await axios.get<Report[]>("/reports", {
+): Promise<ReportsApiResponse> => {
+  const response = await axios.get<ReportsApiResponse>("/reports", {
     params: { status, page },
   });
   return response.data;
