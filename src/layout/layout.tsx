@@ -9,7 +9,6 @@ const Layout: React.FC = () => {
       <header className="p-4 bg-white text-black flex justify-between items-center">
         <h1 className="text-xl">آپا</h1>
         <div className="flex justify-center items-center gap-6">
-          <div>image</div>
           <Button
             type="button"
             label={"خروج از حساب کاربری"}

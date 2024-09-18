@@ -6,7 +6,7 @@ interface FieldProps {
   type?: string;
   as?: string;
   disabled: boolean;
-  onCopy: (text: string) => void;
+  onCopy?: (text: string) => void;
   value: string;
 }
 const Field: React.FC<FieldProps> = ({
@@ -32,12 +32,14 @@ const Field: React.FC<FieldProps> = ({
           disabled={disabled}
           className="block max-h-60 min-h-12 w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm outline-none"
         />
-        <span
-          className="absolute end-2 top-6 transform -translate-y-1/2 cursor-pointer"
-          onClick={() => onCopy(value)}
-        >
-          <img src={copyIcon} alt="copy icon" className="w-5 h-5" />
-        </span>
+        {onCopy && (
+          <span
+            className="absolute end-2 top-6 transform -translate-y-1/2 cursor-pointer"
+            onClick={() => onCopy(value)}
+          >
+            <img src={copyIcon} alt="copy icon" className="w-5 h-5" />
+          </span>
+        )}
       </div>
     </div>
   );

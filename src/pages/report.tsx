@@ -7,6 +7,7 @@ import {
   useUpdateReport,
   useApproveReport,
   useRejectReport,
+  useDeleteReport,
 } from "@/api/reports/reportMutations";
 import { useDropzone } from "react-dropzone";
 import { useReport } from "@/api/reports/useReports";
@@ -26,7 +27,8 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const { role } = useSelector((state: RootState) => state.auth);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
-
+  const { mutate: deleteMutation, isLoading: deleteLoading } =
+    useDeleteReport();
   const navigate = useNavigate();
 
   const handleImageDrop = useCallback((acceptedFiles: File[]) => {
@@ -113,6 +115,17 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
     });
   };
 
+  const handleDelete = async () => {
+    deleteMutation(id as string, {
+      onSuccess: () => {
+        navigate(-1);
+      },
+      onError: (error) => {
+        toast.error("اشکالی در حذف گزارش پیش آمده است.");
+      },
+    });
+  };
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied", {
@@ -145,7 +158,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 name="title"
                 label="عنوان"
                 disabled={mode === "view"}
-                onCopy={handleCopy}
+                onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.title}
                 type="text"
               />
@@ -153,69 +166,87 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 name="description"
                 label="توضیحات"
                 disabled={mode === "view"}
-                onCopy={handleCopy}
+                onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.description}
                 as="textarea"
               />
-
               <Field
-                name="cve"
+                name="vulnerability_path"
+                label="مسیر آسیب پذیری"
+                disabled={mode === "view"}
+                onCopy={mode === "new" ? undefined : handleCopy}
+                value={values.cve}
+                type="text"
+              />
+              <Field
+                name="source"
                 label="منبع و یا CVE مربوطه"
                 disabled={mode === "view"}
-                onCopy={handleCopy}
+                onCopy={mode === "new" ? undefined : handleCopy}
+                value={values.cve}
+                type="text"
+              />
+              <Field
+                name="cvss_vector"
+                label="وکتور CVSS"
+                disabled={mode === "view"}
+                onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.cve}
                 type="text"
               />
 
-              {/* <div className="flex justify-start items-start flex-col gap-3 md:w-[50%] max-md:w-full">
-                                <label className="block text-base font-medium text-black">
-                                    {" "}
-                                    مستندات
-                                </label>
-                                <div
-                                    {...getRootProps()}
-                                    className="border-2 border-dashed border-gray-300 p-6 w-full text-center cursor-pointer"
-                                >
-                                    <input {...getInputProps()} />
-                                    <p className="text-gray-500">
-                                        Drag and drop images here, or click to select files
-                                    </p>
-                                </div>
-                                <div
-                                    className="mt-4 w-full grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-4">
-                                    {images.map((file, index) => (
-                                        <div
-                                            key={index}
-                                            className="border rounded-[10px] p-3 flex flex-col items-center justify-center gap-3"
-                                        >
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt={file.name}
-                                                className="w-30 h-30 object-cover"
-                                            />
-                                            <span className="text-sm">{file.name}</span>
-                                            <div className="flex justify-center items-center gap-4 w-full">
-                                                <button
-                                                    type="button"
-                                                    className="text-blue-500"
-                                                    onClick={() =>
-                                                        handlePreviewImage(URL.createObjectURL(file))
-                                                    }
-                                                >
-                                                    Preview
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="text-red-500"
-                                                    onClick={() => handleImageRemove(index)}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div> */}
+              <div className="flex justify-start items-start flex-col gap-3 md:w-[50%] max-md:w-full">
+                <label className="block text-base font-medium text-black">
+                  {" "}
+                  مستندات
+                </label>
+                {mode !== "view" && (
+                  <div
+                    {...getRootProps()}
+                    className="border-2 border-dashed border-gray-300 p-6 w-full text-center cursor-pointer"
+                  >
+                    <input {...getInputProps()} />
+                    <p className="text-gray-500">
+                      Drag and drop images here, or click to select files
+                    </p>
+                  </div>
+                )}
+                <div className="mt-4 w-full grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-4">
+                  {images.map((file, index) => (
+                    <div
+                      key={index}
+                      className="border rounded-[10px] p-3 flex flex-col items-center justify-center gap-3"
+                    >
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        className="w-30 h-30 object-cover"
+                      />
+                      <span className="text-sm">{file.name}</span>
+                      <div className="flex justify-center items-center gap-4 w-full">
+                        <button
+                          type="button"
+                          className="text-blue-500"
+                          onClick={() =>
+                            handlePreviewImage(URL.createObjectURL(file))
+                          }
+                        >
+                          Preview
+                        </button>
+                        {mode !== "view" && (
+                          <button
+                            type="button"
+                            className="text-red-500"
+                            onClick={() => handleImageRemove(index)}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {mode != "view" && (
@@ -244,6 +275,16 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
             onClick={handleReject}
             label="رد گزارش"
             loading={rejectLoading}
+            variant="danger"
+          />
+        </div>
+      )}
+      {mode === "view" && role === "author" && (
+        <div className="mt-10">
+          <Button
+            onClick={handleDelete}
+            label="حذف گزارش"
+            loading={deleteLoading}
             variant="danger"
           />
         </div>
