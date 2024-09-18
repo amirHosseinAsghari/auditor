@@ -31,9 +31,9 @@ const Dashboard: React.FC = () => {
 
   const handleTabChange = (tab: string) => {
     if (tab === "new") {
-      navigate(`?page=${page}`, { replace: true });
+      navigate(`?page=${1}`, { replace: true });
     } else {
-      navigate(`?status=${tab}&page=${page}`, { replace: true });
+      navigate(`?status=${tab}&page=${1}`, { replace: true });
     }
   };
 
@@ -181,27 +181,27 @@ const Dashboard: React.FC = () => {
             onClick={() => navigate("report/new")}
           />
         )}
-        {data && data.page_count && (
-          <div className="flex justify-center items-center gap-5">
-            <Button
-              type="button"
-              label={"قبلی"}
-              variant="primary"
-              onClick={() => handlePagination(page - 1)}
-              pagination
-              disabled={page === 1}
-            />
 
-            <Button
-              type="button"
-              label={"بعدی"}
-              variant="primary"
-              onClick={() => handlePagination(page + 1)}
-              pagination
-              disabled={data?.page_count === page}
-            />
-          </div>
-        )}
+        {data?.page_count ? data?.page_count !== 1 && (
+            <div className="flex justify-center items-center gap-4">
+              <Button
+                  type="button"
+                  label={"بعدی"}
+                  variant="primary"
+                  onClick={() => handlePagination(page + 1)}
+                  pagination
+                  disabled={data?.page_count === page}
+              />
+              <Button
+                  type="button"
+                  label={"قبلی"}
+                  variant="primary"
+                  onClick={() => handlePagination(page - 1)}
+                  pagination
+                  disabled={page === 1}
+              />
+            </div>
+        ): ""}
       </div>
       {renderReports()}
     </div>
