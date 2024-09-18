@@ -2,9 +2,7 @@ import { useQuery } from "react-query";
 import { fetchReport, fetchReports } from "./reports";
 
 const useReports = (page: number, status?: string) => {
-  return useQuery(["reports", status], () => fetchReports(page, status), {
-    enabled: !!status,
-  });
+  return useQuery(["reports", status], () => fetchReports(page, status));
 };
 
 export default useReports;

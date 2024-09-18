@@ -51,10 +51,10 @@ export const useDeleteReport = () => {
   });
 };
 
-export const useApproveReport = (id: string) => {
-  return useMutation(() => approveReport(id));
+export const useApproveReport = () => {
+  return useMutation((id: string) => approveReport(id));
 };
 
-export const useRejectReport = (id: string) => {
-  return useMutation(() => rejectReport(id));
+export const useRejectReport = () => {
+  return useMutation((id: string) => rejectReport(id));
 };

@@ -53,9 +53,8 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
     id as string
   );
   const { mutate: approveMutation, isLoading: approveLoading } =
-    useApproveReport(id as string);
+    useApproveReport();
   const { mutate: rejectMutation, isLoading: rejectLoading } = useRejectReport(
-    id as string
   );
 
   const handleSubmit = async (values: any) => {
@@ -90,7 +89,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   };
 
   const handleApprove = async () => {
-    approveMutation(undefined, {
+    approveMutation(id as string, {
       onSuccess: () => {
         navigate(-1);
       },
@@ -105,7 +104,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   };
 
   const handleReject = async () => {
-    rejectMutation(undefined, {
+    rejectMutation(id as string, {
       onSuccess: () => {
         navigate(-1);
       },

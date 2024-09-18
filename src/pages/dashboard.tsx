@@ -23,7 +23,6 @@ const Dashboard: React.FC = () => {
         isLoading,
         error,
     } = useReports(page, status === "new" ? undefined : status);
-
  
 
     const [contextMenu, setContextMenu] = useState<{
