@@ -8,6 +8,7 @@ interface FieldProps {
   disabled: boolean;
   onCopy?: (text: string) => void;
   value: string;
+  error?: boolean;
 }
 const Field: React.FC<FieldProps> = ({
   disabled,
@@ -17,6 +18,7 @@ const Field: React.FC<FieldProps> = ({
   type,
   onCopy,
   value,
+  error,
 }) => {
   return (
     <div className="flex justify-start items-start flex-col gap-3 md:w-[50%] max-md:w-full">
@@ -30,7 +32,9 @@ const Field: React.FC<FieldProps> = ({
           as={as}
           type={type}
           disabled={disabled}
-          className="block max-h-60 min-h-12 w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm outline-none"
+          className={`${"block max-h-60 min-h-12 w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm outline-none"} ${
+            error && "border-red-600"
+          }`}
         />
         {onCopy && (
           <span
