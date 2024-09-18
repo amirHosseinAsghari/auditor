@@ -54,8 +54,8 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   );
   const { mutate: approveMutation, isLoading: approveLoading } =
     useApproveReport();
-  const { mutate: rejectMutation, isLoading: rejectLoading } = useRejectReport(
-  );
+  const { mutate: rejectMutation, isLoading: rejectLoading } =
+    useRejectReport();
 
   const handleSubmit = async (values: any) => {
     const formData = { ...values, images };
@@ -77,7 +77,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const validationSchema = Yup.object({
     title: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
-    cve: Yup.string().required("Required"),
+    vulnerability_path: Yup.string().required("Required"),
   });
 
   const handleImageRemove = (index: number) => {
@@ -150,7 +150,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values }) => (
+        {({ values, errors }) => (
           <Form>
             <div className="flex justify-start items-start w-full flex-col gap-7">
               <Field
@@ -160,6 +160,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.title}
                 type="text"
+                error={Boolean(errors.title)}
               />
               <Field
                 name="description"
@@ -168,14 +169,16 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.description}
                 as="textarea"
+                error={Boolean(errors.description)}
               />
               <Field
                 name="vulnerability_path"
                 label="مسیر آسیب پذیری"
                 disabled={mode === "view"}
                 onCopy={mode === "new" ? undefined : handleCopy}
-                value={values.cve}
+                value={values.vulnerability_path}
                 type="text"
+                error={Boolean(errors.vulnerability_path)}
               />
               <Field
                 name="source"
