@@ -63,8 +63,8 @@ export const useIsAuthenticated = () => {
     const navigate = useNavigate();
 
     return useMutation(async () => {
-            const data = await isAuthenticated();
-            return data;
+        const data = await isAuthenticated();
+        return data
         },
         {
             onSuccess: (data) => {
@@ -78,7 +78,6 @@ export const useIsAuthenticated = () => {
             onError: (error) => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("role");
-                console.log("error: ", error);
                 dispatch(clearAuth());
                 navigate("/login");
             }

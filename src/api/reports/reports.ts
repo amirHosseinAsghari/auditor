@@ -58,7 +58,7 @@ interface CreateReportParams {
 export const createReport = async (
   data: CreateReportParams
 ): Promise<Report> => {
-  const response = await axios.post<Report>("/report", data);
+  const response = await axios.post<Report>("/report/create", data);
   return response.data;
 };
 // TODO updateReport doesnt exist on the backend but removeReport with delete method does
@@ -71,7 +71,7 @@ export const updateReport = async (
 };
 
 export const deleteReport = async (id?: string): Promise<Report> => {
-  const response = await axios.delete<Report>(`/report/${id}`);
+  const response = await axios.delete<Report>(`/report/delete/${id}`);
   return response.data;
 };
 

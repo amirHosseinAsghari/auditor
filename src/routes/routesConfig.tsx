@@ -11,7 +11,9 @@ import {useEffect} from "react";
 const ProtectedRoutes: React.FC = () => {
     const {mutate: checkAuth, data: authData, isLoading} = useIsAuthenticated();
     useEffect(() => {
-        checkAuth()
+        if (localStorage.getItem("token")){
+            checkAuth()
+        }
     }, [checkAuth]);
     const {role, isAuthenticated } = useSelector((state: RootState) => state.auth);
 

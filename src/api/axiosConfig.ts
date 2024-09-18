@@ -1,8 +1,5 @@
-import {showErrorToast} from "@/utils/toast";
 import axios from "axios";
-import {toast} from "sonner";
 
-let toastId: any = null;
 const axiosInstance = axios.create({
     // TODO
     baseURL: "http://127.0.0.1:8000/api",
@@ -26,16 +23,5 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-axiosInstance.interceptors.response.use(
-    (config) => {
-        if (config.method === "post" || config.method === "patch" || config.method === "put" || config.method === "delete"){
-            toastId = toast.loading("Loading")
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
 
 export default axiosInstance;

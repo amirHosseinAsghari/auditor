@@ -6,14 +6,15 @@ import {
   rejectReport,
   deleteReport,
 } from "./reports";
-import { queryClient } from "@/main";
 import { toast } from "sonner";
 
 interface CreateReportParams {
   title: string;
   description: string;
-  // TODO
-  //cve
+  vulnerability_path: string;
+  source: string | null;
+  documents: string | null;
+  cvss_vector: string | null;
 }
 
 export const useCreateReport = () => {
