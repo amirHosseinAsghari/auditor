@@ -3,11 +3,13 @@ import axiosInstance from "../axiosConfig";
 interface LoginCredentials {
   username: string;
   password: string;
+
 }
 
 interface LoginResponse {
   token: string;
   role: "auditor" | "author";
+  isAuthenticated: boolean;
 }
 
 export const loginUser = async (

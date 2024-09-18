@@ -1,11 +1,12 @@
 import axiosInstance from "../axiosConfig";
 
-interface Response {
+export interface isAuthenticatedResponse {
     token: string;
-    role: boolean;
+    role: string;
+    isAuthenticated: boolean;
 }
 
-export const isAuthenticated = async (): Promise<Response> => {
-    const response = await axiosInstance.post<Response>("/auth/isAuthenticated");
+export const isAuthenticated = async (): Promise<isAuthenticatedResponse> => {
+    const response = await axiosInstance.post<isAuthenticatedResponse>("/auth/isAuthenticated");
     return response.data;
 };
