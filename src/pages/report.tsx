@@ -150,7 +150,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, errors }) => (
+        {({ values, errors, touched }) => (
           <Form>
             <div className="flex justify-start items-start w-full flex-col gap-7">
               <Field
@@ -160,7 +160,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.title}
                 type="text"
-                error={Boolean(errors.title)}
+                error={touched.title && errors.title ? true : false}
               />
               <Field
                 name="description"
@@ -169,7 +169,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.description}
                 as="textarea"
-                error={Boolean(errors.description)}
+                error={touched.description && errors.description ? true : false}
               />
               <Field
                 name="vulnerability_path"
@@ -178,7 +178,11 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                 onCopy={mode === "new" ? undefined : handleCopy}
                 value={values.vulnerability_path}
                 type="text"
-                error={Boolean(errors.vulnerability_path)}
+                error={
+                  touched.vulnerability_path && errors.vulnerability_path
+                    ? true
+                    : false
+                }
               />
               <Field
                 name="source"
