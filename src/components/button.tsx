@@ -44,7 +44,7 @@ const Button: React.FC<ButtonProps> = ({
           </div>
         </div>
       )}
-      <span className={loading ? "hidden" : ""}>label</span>
+      <span className={loading ? "opacity-0" : "opacity-100"}>{label}</span>
     </button>
   );
 };
