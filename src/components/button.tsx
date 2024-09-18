@@ -32,18 +32,19 @@ const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled || loading}
-      className={`text-white py-3 px-5 rounded-[10px] shadow-sm transition-all ${getButtonStyles()} ${
+      className={`text-white relative py-3 px-5 rounded-[10px] shadow-sm transition-all ${getButtonStyles()} ${
         disabled || loading ? "opacity-50 cursor-not-allowed" : ""
       }`}
       type={type}
     >
-      {loading ? (
-        <div className="container after:!bg-white before:!bg-white">
-          <div className="dot !bg-white"></div>
+      {loading && (
+        <div className="absolute w-full h-full flex justify-center items-center">
+          <div className="container after:!bg-white before:!bg-white">
+            <div className="dot !bg-white"></div>
+          </div>
         </div>
-      ) : (
-        label
       )}
+      <span className={loading ? "hidden" : ""}>label</span>
     </button>
   );
 };
