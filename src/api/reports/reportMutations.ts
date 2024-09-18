@@ -29,12 +29,6 @@ export const useDeleteReport = () => {
   const queryClient = useQueryClient();
 
   return useMutation((reportId: string) => deleteReport(reportId), {
-    onMutate: () => {
-      toast.loading("در حال حذف گزارش...", {
-        position: "bottom-right",
-        richColors: true,
-      });
-    },
     onSuccess: () => {
       toast.success("گزارش با موفقیت حذف شد", {
         position: "bottom-right",
