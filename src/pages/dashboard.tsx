@@ -141,7 +141,7 @@ const Dashboard: React.FC = () => {
                   className={`rounded-lg px-3 py-2 font-normal text-sm border ${
                     report.status === "approved"
                       ? "text-green-400 border-green-400"
-                      : status === "rejected"
+                      : report.status === "rejected"
                       ? "text-red-500 border-red-500"
                       : "text-blue-600 border-blue-600"
                   }`}
@@ -181,26 +181,27 @@ const Dashboard: React.FC = () => {
             onClick={() => navigate("report/new")}
           />
         )}
-        <div className="flex justify-center items-center gap-5">
-          {page > 1 && (
+        {data && data.page_count && (
+          <div className="flex justify-center items-center gap-5">
             <Button
               type="button"
               label={"قبلی"}
               variant="primary"
               onClick={() => handlePagination(page - 1)}
               pagination
+              disabled={page === 1}
             />
-          )}
-          {data?.page_count && page < data.page_count && (
+
             <Button
               type="button"
               label={"بعدی"}
               variant="primary"
               onClick={() => handlePagination(page + 1)}
               pagination
+              disabled={data?.page_count === page}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
       {renderReports()}
     </div>
