@@ -24,8 +24,7 @@ const Dashboard: React.FC = () => {
         error,
     } = useReports(page, status === "new" ? undefined : status);
 
-    const {mutate: deleteMutation, isLoading: deleteLoading} =
-        useDeleteReport();
+ 
 
     const [contextMenu, setContextMenu] = useState<{
         x: number;
@@ -63,17 +62,7 @@ const Dashboard: React.FC = () => {
         };
     }, [handleClickOutside]);
 
-    const handleMenuOptionClick = async (option: "delete" | "edit") => {
-        if (contextMenu) {
-            if (option === "delete") {
-                deleteMutation(contextMenu.reportId.toString());
-            } else {
-                const path = `report/edit/${contextMenu.reportId}`;
-                navigate(path);
-            }
-            setContextMenu(null);
-        }
-    };
+
     const renderTabs = () => (
         <div className="flex gap-2 justify-start items-start">
             {["new", "approved", "rejected"].map((tab) => (
@@ -121,7 +110,7 @@ const Dashboard: React.FC = () => {
                 {reports?.map((report: Report) => (
                     <div
                         key={report.id}
-                        className="w-full rounded-[10px] flex flex-col gap-3 justify-center items-start border border-[#00000040] p-4 shadow"
+                        className="w-full cursor-pointer rounded-[10px] flex flex-col gap-3 justify-center items-start border border-[#00000040] p-4 shadow"
                         onContextMenu={(event) =>
                             handleRightClick(event, Number(report.id))
                         }
@@ -154,27 +143,6 @@ const Dashboard: React.FC = () => {
                         <p className="text-sm font-normal">{report.date}</p>
                     </div>
                 ))}
-                {contextMenu && (
-                    <div
-                        className="context-menu fixed bg-white border border-gray-300 rounded-[10px] p-2 shadow-lg"
-                        style={{left: contextMenu.x, top: contextMenu.y}}
-                    >
-                        <ul>
-                            <li
-                                onClick={() => handleMenuOptionClick("delete")}
-                                className="p-2 text-sm font-medium cursor-pointer hover:bg-gray-100"
-                            >
-                                حذف گزارش
-                            </li>
-                            <li
-                                onClick={() => handleMenuOptionClick("edit")}
-                                className="p-2 text-sm font-medium  cursor-pointer hover:bg-gray-100"
-                            >
-                                ویرایش گزارش
-                            </li>
-                        </ul>
-                    </div>
-                )}
             </div>
         );
     };

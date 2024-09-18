@@ -15,6 +15,7 @@ const ProtectedRoutes: React.FC = () => {
             checkAuth()
         }
     }, [checkAuth]);
+    
     const {role, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     if (isLoading) {
@@ -24,7 +25,6 @@ const ProtectedRoutes: React.FC = () => {
             </div>
         );
     }
-    console.log(isAuthenticated)
 
     return (
         <Routes>
