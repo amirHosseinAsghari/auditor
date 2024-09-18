@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
         }
 
         if (error) {
-            if ((error as any).status === 404) {
+            if ((error as any).response.status === 404) {
                 return <p className="font-medium text-base">گزارشی موجود نیست.</p>;
             }
             return (
