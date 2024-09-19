@@ -156,9 +156,7 @@ const Dashboard: React.FC = () => {
               {report.description}
             </p>
             <p className="text-sm font-normal">
-              {/*TODO Jalali*/}
-              {/*{convertToShamsi(report.date)}*/}
-              {report.date}
+              {convertToShamsi(report.date)}
             </p>
           </div>
         ))}
