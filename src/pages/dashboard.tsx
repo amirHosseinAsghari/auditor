@@ -136,23 +136,21 @@ const Dashboard: React.FC = () => {
           >
             <div className="w-full flex justify-between items-center">
               <h2 className="font-semibold text-xl">{report.title}</h2>
-              {role === "author" && (
-                <div
-                  className={`rounded-lg px-3 py-2 font-normal text-sm border ${
-                    report.status === "approved"
-                      ? "text-green-400 border-green-400"
-                      : report.status === "rejected"
-                      ? "text-red-500 border-red-500"
-                      : "text-blue-600 border-blue-600"
-                  }`}
-                >
-                  {report.status === "approved"
-                    ? "تایید شده"
+              <div
+                className={`rounded-lg px-3 py-2 font-normal text-sm border ${
+                  report.status === "approved"
+                    ? "text-green-500 border-green-500"
                     : report.status === "rejected"
-                    ? "رد شده"
-                    : "جدید"}
-                </div>
-              )}
+                    ? "text-red-600 border-red-600"
+                    : "text-blue-700 border-blue-700"
+                }`}
+              >
+                {report.status === "approved"
+                  ? "تایید شده"
+                  : report.status === "rejected"
+                  ? "رد شده"
+                  : "جدید"}
+              </div>
             </div>
             <p className="w-full truncate text-base font-medium">
               {report.description}
@@ -182,26 +180,28 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-        {data?.page_count ? data?.page_count !== 1 && (
-            <div className="flex justify-center items-center gap-4">
-              <Button
+        {data?.page_count
+          ? data?.page_count !== 1 && (
+              <div className="flex justify-center items-center gap-4">
+                <Button
                   type="button"
                   label={"بعدی"}
                   variant="primary"
                   onClick={() => handlePagination(page + 1)}
                   pagination
                   disabled={data?.page_count === page}
-              />
-              <Button
+                />
+                <Button
                   type="button"
                   label={"قبلی"}
                   variant="primary"
                   onClick={() => handlePagination(page - 1)}
                   pagination
                   disabled={page === 1}
-              />
-            </div>
-        ): ""}
+                />
+              </div>
+            )
+          : ""}
       </div>
       {renderReports()}
     </div>
