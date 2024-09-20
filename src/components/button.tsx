@@ -34,7 +34,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled || loading}
-      className={`text-white relative py-3 px-5 rounded-[10px] shadow-sm transition-all ${getButtonStyles()} ${
+      className={`text-white relative py-3 px-5 rounded-[10px] shadow-sm transition-all flex justify-center items-center ${getButtonStyles()} ${
         disabled || loading ? "opacity-50 cursor-not-allowed" : ""
       } ${
         pagination
@@ -46,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
       type={type}
     >
       {loading && (
-        <div className="absolute w-full h-full flex justify-center items-center">
+        <div className="flex justify-center items-center w-full h-full absolute">
           <div
             className={`${"container"} ${
               pagination
