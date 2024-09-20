@@ -50,8 +50,8 @@ export const fetchReport = async (id: number | undefined): Promise<Report> => {
     "cvss_vector": "string"
   }
 }
-* */ // TODO this is the schema that create report api requires and it wants its token in the body of the request not in the header
-interface CreateReportParams {
+* */ // TODO this is the schema that create report api requires and it wants its token in the body of the request not in the headere
+export interface CreateReportParams {
   title: string;
   description: string;
   vulnerability_path: string;
@@ -60,18 +60,24 @@ interface CreateReportParams {
   cvss_vector: string | null;
 }
 
-export const createReport = async (
-  data: CreateReportParams
-): Promise<Report> => {
-  const response = await axios.post<Report>("/report/create", data);
+export const createReport = async (data: FormData): Promise<Report> => {
+  const response = await axios.post<Report>("/report/create", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 // TODO updateReport doesnt exist on the backend but removeReport with delete method does
 export const updateReport = async (
   id: string,
-  data: CreateReportParams
+  data: FormData
 ): Promise<Report> => {
-  const response = await axios.put<Report>(`/report/${id}`, data);
+  const response = await axios.put<Report>(`/report/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
