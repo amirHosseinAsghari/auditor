@@ -8,21 +8,13 @@ import {
 } from "./reports";
 import { toast } from "sonner";
 
-interface CreateReportParams {
-  title: string;
-  description: string;
-  vulnerability_path: string;
-  source: string | null;
-  documents: string | null;
-  cvss_vector: string | null;
-}
 
 export const useCreateReport = () => {
-  return useMutation((data: CreateReportParams) => createReport(data));
+  return useMutation((data: FormData) => createReport(data));
 };
 
 export const useUpdateReport = (id: string) => {
-  return useMutation((data: CreateReportParams) => updateReport(id, data));
+  return useMutation((data: FormData) => updateReport(id, data));
 };
 
 export const useDeleteReport = () => {
@@ -45,10 +37,12 @@ export const useDeleteReport = () => {
   });
 };
 
+// Function for approving a report
 export const useApproveReport = () => {
   return useMutation((id: string) => approveReport(id));
 };
 
+// Function for rejecting a report
 export const useRejectReport = () => {
   return useMutation((id: string) => rejectReport(id));
 };
