@@ -67,8 +67,8 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
     formData.append("source", values.source || "");
     formData.append("cvss_vector", values.cvss_vector || "");
 
-    images.forEach((file, index) => {
-      formData.append(`documents[${index}]`, file);
+    images.forEach((file) => {
+      formData.append(`documents`, file);
     });
 
     if (mode === "new") {
