@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -17,17 +17,20 @@ import Field from "@/components/field";
 import Button from "@/components/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store.ts";
-import { CreateReportParams } from "@/api/reports/reports";
 
 interface ReportPageProps {
   mode: "view" | "edit" | "new";
 }
+
+const BASE_IMAGE_URL = "https://hellooooooooo.com/images";
 
 const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const { id } = useParams();
   const { role } = useSelector((state: RootState) => state.auth);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [loadingImages, setLoadingImages] = useState<boolean[]>([]);
   const { mutate: deleteMutation, isLoading: deleteLoading } =
     useDeleteReport();
   const navigate = useNavigate();
@@ -86,6 +89,15 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
     }
   };
 
+  useEffect(() => {
+    if (mode === "view" || mode === "edit") {
+      const documentIds = report?.documents?.split(",") || [];
+      const urls = documentIds.map((id: string) => `${BASE_IMAGE_URL}/${id}`);
+      setImageUrls(urls);
+      setLoadingImages(new Array(urls.length).fill(true));
+    }
+  }, [report, mode]);
+
   const validationSchema = Yup.object({
     title: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
@@ -143,6 +155,12 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
       position: "bottom-right",
       richColors: true,
     });
+  };
+
+  const handleImageLoad = (index: number) => {
+    setLoadingImages((prevLoadingImages) =>
+      prevLoadingImages.map((loading, i) => (i === index ? false : loading))
+    );
   };
 
   if (isLoading)
@@ -246,7 +264,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                         <img
                           src={URL.createObjectURL(file)}
                           alt={file.name}
-                          className="w-30 h-30 object-cover"
+                          className="w-28 h-28 object-cover"
                         />
                         <span className="text-sm">{file.name}</span>
                         <div className="flex justify-center items-center gap-4 w-full">
@@ -269,6 +287,46 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
                             </button>
                           )}
                         </div>
+                      </div>
+                    ))}
+                    {imageUrls.map((url, index) => (
+                      <div
+                        key={index}
+                        className="border rounded-[10px] p-3 flex flex-col items-center justify-center gap-3"
+                      >
+                        {loadingImages[index] ? (
+                          <div className="w-32 h-32 rounded-[10px] border border-gray-400 bg-gray-200 animate-pulse"></div>
+                        ) : (
+                          <div
+                            key={index}
+                            className="border rounded-[10px] p-3 flex flex-col items-center justify-center gap-3"
+                          >
+                            <img
+                              src={url}
+                              alt={`Document ${index}`}
+                              className="w-30 h-30 object-cover"
+                              onLoad={() => handleImageLoad(index)}
+                            />
+                            <div className="flex justify-center items-center gap-4 w-full">
+                              <button
+                                type="button"
+                                className="text-blue-500"
+                                onClick={() => handlePreviewImage(url)}
+                              >
+                                Preview
+                              </button>
+                              {mode === "edit" && (
+                                <button
+                                  type="button"
+                                  className="text-red-500"
+                                  onClick={() => handleImageRemove(index)}
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
