@@ -17,12 +17,13 @@ import Field from "@/components/field";
 import Button from "@/components/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store.ts";
+import axiosInstance from "@/api/axiosConfig.ts";
 
 interface ReportPageProps {
   mode: "view" | "edit" | "new";
 }
 
-const BASE_IMAGE_URL = "https://hellooooooooo.com/images";
+const BASE_IMAGE_URL = axiosInstance.defaults.baseURL + "/view";
 
 const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const { id } = useParams();
@@ -91,8 +92,9 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
 
   useEffect(() => {
     if (mode === "view" || mode === "edit") {
-      const documentIds = report?.documents?.split(",") || [];
-      const urls = documentIds.map((id: string) => `${BASE_IMAGE_URL}/${id}`);
+      const documentIds = report?.documents?.match(",") ? report?.documents?.split(",") : (report?.documents ? [report?.documents] : []);
+      const urls = documentIds.map((id: string) => `${BASE_IMAGE_URL}/${id}?report_id=${report?.id}`);
+      console.log(urls)
       setImageUrls(urls);
       setLoadingImages(new Array(urls.length).fill(true));
     }
