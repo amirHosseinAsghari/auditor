@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store.ts";
 import { ImageUploader } from "@/components/imageUploader";
 import { ActionButtons } from "@/components/actionButtons";
+import { useImageUrls } from "@/hooks/report";
 
 interface FormField {
   name: keyof ReportFormValues;
@@ -52,7 +53,6 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const { role } = useSelector((state: RootState) => state.auth);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const handleMutation = (
@@ -119,13 +119,8 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
     }
   };
 
-  useEffect(() => {
-    if (mode === "view" || mode === "edit") {
-      const documentIds = report?.documents ? report.documents.split(",") : [];
-      const { data: imageUrls } = useDocumentImages(documentIds, id || "");
-      if (imageUrls) setImageUrls(imageUrls);
-    }
-  }, [report, mode, id]);
+  const imageUrls =
+    mode === "view" || mode === "edit" ? useImageUrls(report, id) : [];
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Required"),
@@ -158,8 +153,6 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
   const handleImageRemove = (index: number) => {
     if (index < images.length) {
       setImages(images.filter((_, i) => i !== index));
-    } else {
-      setImageUrls(imageUrls.filter((_, i) => i !== index - images.length));
     }
   };
 
@@ -205,7 +198,7 @@ const Report: React.FC<ReportPageProps> = ({ mode }) => {
               {!(mode === "view" && images.length <= 0) && (
                 <ImageUploader
                   images={images}
-                  imageUrls={imageUrls}
+                  imageUrls={imageUrls || []}
                   onRemove={handleImageRemove}
                   onPreview={handlePreviewImage}
                   getRootProps={getRootProps}
