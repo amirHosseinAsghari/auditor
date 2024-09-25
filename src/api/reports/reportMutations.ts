@@ -37,12 +37,11 @@ export const useDeleteReport = () => {
   });
 };
 
-// Function for approving a report
 export const useApproveReport = () => {
   return useMutation((id: string) => approveReport(id));
 };
 
-// Function for rejecting a report
 export const useRejectReport = () => {
   return useMutation((id: string) => rejectReport(id));
 };
+
