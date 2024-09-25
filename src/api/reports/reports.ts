@@ -95,14 +95,3 @@ export const rejectReport = async (id: string): Promise<Report> => {
   const response = await axios.patch<Report>(`/report/${id}/reject`);
   return response.data;
 };
-
-export const fetchDocumentImage = async (
-  documentId: string,
-  reportId: string
-) => {
-  const response = await axios.get(`/view/${documentId}`, {
-    params: { report_id: reportId },
-    responseType: "blob", 
-  });
-  return URL.createObjectURL(response.data);
-};
